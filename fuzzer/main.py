@@ -34,7 +34,7 @@ from utils.utils import initialize_logger, compile, get_interface_from_abi, get_
 from utils.control_flow_graph import ControlFlowGraph
 
 # new
-from cfg_analysis.rCFG import rCFG
+from static_analysis.rCFG import rCFG
 
 class Fuzzer:
     def __init__(self, contract_name, abi, deployment_bytecode, runtime_bytecode, test_instrumented_evm, blockchain_state, solver, args, seed, source_map=None):

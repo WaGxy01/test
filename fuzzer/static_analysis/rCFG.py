@@ -1,5 +1,5 @@
-from cfg_analysis.cfg.disassembly import generate_BBs
-from cfg_analysis.cfg.cfg import CFG
+from static_analysis.cfg.disassembly import generate_BBs
+from static_analysis.cfg.cfg import CFG
 
 class rCFG(object):
 
