@@ -34,7 +34,7 @@ from utils.utils import initialize_logger, compile, get_interface_from_abi, get_
 from utils.control_flow_graph import ControlFlowGraph
 
 # new
-from static_analysis.rCFG import rCFG
+from static_analysis.path import PathAnalyzer
 
 class Fuzzer:
     def __init__(self, contract_name, abi, deployment_bytecode, runtime_bytecode, test_instrumented_evm, blockchain_state, solver, args, seed, source_map=None):
@@ -233,11 +233,10 @@ def main():
                 if args.contract and contract_name != args.contract:
                     continue
                 if contract['abi'] and contract['evm']['bytecode']['object'] and contract['evm']['deployedBytecode']['object']:
-                    '''
+
                     runtime_bytecode = contract['evm']['deployedBytecode']['object']
-                    cfg = rCFG(runtime_bytecode).get_cfg()
-                    print(cfg)
-                    '''
+                    path_analyze = PathAnalyzer(runtime_bytecode)
+
                     source_map = SourceMap(':'.join([args.source, contract_name]), compiler_output)
                     Fuzzer(contract_name, contract["abi"], contract['evm']['bytecode']['object'], contract['evm']['deployedBytecode']['object'], instrumented_evm, blockchain_state, solver, args, seed, source_map).run()
         else:
