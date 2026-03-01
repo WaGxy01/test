@@ -25,6 +25,7 @@ class ExecutionTraceAnalyzer(OnTheFlyAnalysis):
         self.logger = initialize_logger("Analysis")
         self.env = fuzzing_environment
         self.symbolic_execution_count = 0
+        self._static_injected = False
 
     def setup(self, ng, engine):
         pass
@@ -272,6 +273,20 @@ class ExecutionTraceAnalyzer(OnTheFlyAnalysis):
                     if _function_hash not in self.env.data_dependencies:
                         self.env.data_dependencies[_function_hash] = {"read": set(), "write": set()}
                     self.env.data_dependencies[_function_hash]["write"].add(storage_slot)
+
+                # new
+                if not self._static_injected and self.env.data_dependencies:
+                    from static_analysis.path import PathAnalyzer
+
+                    analyzer = PathAnalyzer(self.env.runtime_bytecode)
+                    static_deps = analyzer.analyze()
+
+                    for func_sig, dep in static_deps.items():
+                        if func_sig not in self.env.data_dependencies:
+                            self.env.data_dependencies[func_sig] = {"read": set(), "write": set()}
+                        self.env.data_dependencies[func_sig]["read"].update(dep["read"])
+
+                    self._static_injected = True
 
                 # If something goes wrong, we need to clean some pools
                 elif instruction["op"] in ["REVERT", "INVALID", "ASSERTFAIL"]:

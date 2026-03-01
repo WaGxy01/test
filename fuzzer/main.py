@@ -75,6 +75,7 @@ class Fuzzer:
                                       args=args,
                                       seed=seed,
                                       cfg=cfg,
+                                      runtime_bytecode=runtime_bytecode,
                                       abi=abi)
 
     def run(self):
